@@ -9,6 +9,8 @@ chrome.runtime.onMessage.addListener(
 			var deferredData = extractor.getData();
 			deferredData.done(function(data){
 				console.log("dataextractor data", data);
+                data[0]['org_id'] = String(request.sitemap.org_id)
+                data[0]['org_name'] = String(request.sitemap.org_name)
 				sendResponse(data);
 			});
 			return true;
@@ -62,15 +64,16 @@ chrome.runtime.onMessage.addListener(
 );
 
 document.addEventListener("rolli-scraping", function(data) {
-    console.log(data);
-
     let request = {
         scrapeSitemap: true,
         fromRolli: true,
         sitemap: structuredClone(data?.detail?.sitemap),
-        requestInterval: 2000,
+        requestInterval: 1000,
         pageLoadDelay: 500
     };
+
+    request.sitemap['org_id'] = data?.detail?.org_id
+    request.sitemap['org_name'] = data?.detail?.org_name
 
     chrome.runtime.sendMessage(request);
 });
